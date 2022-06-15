@@ -11,7 +11,7 @@ import requests
 import itertools
 
 data_path='sb_data'
-db_location='sb_data.sql'
+db_location='sb_data.sqlite'
 
 
 if not os.path.exists(data_path):
@@ -94,7 +94,7 @@ for match_id in match_ids:
     ids_360=[i.get('event_uuid') for i in three60_json]
     ev_insert_list=[]
     for ev in ev_json:
-        ev_dict={'match_id':match_id,'has_360':ev.get('id') in ids_360}|{i:ev.get(i) for i in [i for i in ev if i in sds.Event.__table__.columns.keys()]}
+        ev_dict={'match_id':match_id,'has_360':ev.get('id') in ids_360}|{i:ev.get(i) for i in sds.Event.__table__.columns.keys()}
         ev_dict['timestamp']=datetime.strptime(ev_dict['timestamp'],'%H:%M:%S.%f').time()
         ev_dict['team_id']=ev.get('possession_team',{}).get('id')
         ev_dict['type_id']=ev.get('type',{}).get('id')
@@ -110,6 +110,6 @@ for match_id in match_ids:
             elif len(end_loc)==3:
                 ev_dict['end_location_x'],ev_dict['end_location_y'],ev_dict['end_location_z']=end_loc
         ev_dict['recieve_player_id']=ev.get('pass',{}).get('recipient',{}).get('id')
-    ev_insert_list.append(ev_dict)
+        ev_insert_list.append(ev_dict)
     with Session.begin() as sess:
         sess.execute(insert(sds.Event).values(ev_insert_list))
