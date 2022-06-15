@@ -94,7 +94,7 @@ for match_id in match_ids:
     ids_360=[i.get('event_uuid') for i in three60_json]
     ev_insert_list=[]
     for ev in ev_json:
-        ev_dict={'match_id':match_id,'has_360':ev.get('id') in ids_360}|{i:ev.get(i) for i in sds.Event.__table__.columns.keys()}
+        ev_dict={i:ev.get(i) for i in sds.Event.__table__.columns.keys()}|{'match_id':match_id,'has_360':ev.get('id') in ids_360}
         ev_dict['timestamp']=datetime.strptime(ev_dict['timestamp'],'%H:%M:%S.%f').time()
         ev_dict['team_id']=ev.get('possession_team',{}).get('id')
         ev_dict['type_id']=ev.get('type',{}).get('id')
