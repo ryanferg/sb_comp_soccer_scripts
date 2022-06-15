@@ -1,6 +1,5 @@
 import os
 import json
-from IPython.display import JSON
 import pandas as pd
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
