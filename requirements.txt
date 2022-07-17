@@ -2,3 +2,5 @@ sqlalchemy
 pandas
 requests
 matplotlib
+dash
+dash-bootstrap-components

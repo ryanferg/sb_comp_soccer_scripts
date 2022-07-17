@@ -47,7 +47,7 @@ def import_data():
     if not os.path.exists(path_lineup):
         os.mkdir(path_lineup)
     for lineup_url in lineup_urls:
-        file_name=os.path.join(path_lineup,ev_url.split('/')[-1])
+        file_name=os.path.join(path_lineup,lineup_url.split('/')[-1])
         if not os.path.exists(file_name):
             with open(file_name,'w') as fl:
                 json.dump(requests.get(lineup_url).json(),fl)
@@ -98,7 +98,8 @@ def import_data():
         for ev in ev_json:
             ev_dict={i:ev.get(i) for i in sds.Event.__table__.columns.keys()}|{'match_id':match_id,'has_360':ev.get('id') in ids_360}
             ev_dict['timestamp']=datetime.strptime(ev_dict['timestamp'],'%H:%M:%S.%f').time()
-            ev_dict['team_id']=ev.get('possession_team',{}).get('id')
+            ev_dict['possession_team_id']=ev.get('possession_team',{}).get('id')
+            ev_dict['team_id']=ev.get('team',{}).get('id')
             ev_dict['type_id']=ev.get('type',{}).get('id')
             ev_dict['player_id']=ev.get('player',{}).get('id')
             ev_dict['position_id']=ev.get('position',{}).get('id')
@@ -111,10 +112,23 @@ def import_data():
                     ev_dict['end_location_x'],ev_dict['end_location_y']=end_loc
                 elif len(end_loc)==3:
                     ev_dict['end_location_x'],ev_dict['end_location_y'],ev_dict['end_location_z']=end_loc
+                end_outcome_id=ev.get(end_type,{}).get('outcome',{}).get('id')
+                if end_outcome_id:
+                    ev_dict['outcome_id']=end_outcome_id
+                end_pass_type_id=ev.get(end_type,{}).get('type',{}).get('id')
+                if end_pass_type_id:
+                    ev_dict['pass_type_id']=end_pass_type_id
+                if end_type=='pass':
+                    ev_dict['cross']=False
+                    ev_dict['switch']=False
+                    if 'cross' in ev.get(end_type,{}):
+                        ev_dict['cross']=True
+                    if 'switch' in ev.get(end_type,{}):
+                        ev_dict['switch']=True
             ev_dict['recieve_player_id']=ev.get('pass',{}).get('recipient',{}).get('id')
             ev_insert_list.append(ev_dict)
         with Session.begin() as sess:
             sess.execute(insert(sds.Event).values(ev_insert_list))
 
-if '__name__'=='__main__':
+if __name__=='__main__':
     import_data()
