@@ -16,7 +16,6 @@ player_options = (
 )
 gameDF = pd.read_csv(os.path.join(cur_dir, "gameDF.csv"))
 
-
 app = dash.Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
 
 SIDEBAR_STYLE = {
@@ -27,13 +26,6 @@ SIDEBAR_STYLE = {
     "width": "16rem",
     "padding": "2rem 1rem",
     "background-color": "#f8f9fa",
-}
-
-
-CONTENT_STYLE = {
-    "margin-left": "18rem",
-    "margin-right": "2rem",
-    "padding": "2rem 1rem",
 }
 
 sidebar = html.Div(
