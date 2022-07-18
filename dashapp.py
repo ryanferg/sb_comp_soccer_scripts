@@ -23,8 +23,6 @@ SIDEBAR_STYLE = {
     "top": 0,
     "left": 0,
     "bottom": 0,
-    "width": "16rem",
-    "padding": "2rem 1rem",
     "background-color": "#f8f9fa",
 }
 
@@ -66,11 +64,10 @@ layout = go.Layout(
 
 fig = go.Figure(layout=layout)
 
-plot_body = html.Div(
-    [dcc.Graph(id="figure", figure=fig, config=dict(fillFrame=True))],
-    style={"position": "relative", "display": "flex", "justify-content": "center"},
-)
-app.layout = dbc.Container(dbc.Row([dbc.Col(sidebar), plot_body]))
+plot_body = dbc.Col(html.Div(
+    [dcc.Graph(id="figure", figure=fig, config=dict(fillFrame=True),style={'width':'90vh'})],
+    ),width={'size':9,'offset':1,'order':'last'})
+app.layout = dbc.Container(dbc.Row([dbc.Col(sidebar,width={'size':2,'order':'first'}), plot_body]))
 
 
 @app.callback(
